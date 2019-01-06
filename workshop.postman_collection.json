@@ -1,0 +1,187 @@
+{
+	"info": {
+		"name": "workshop",
+		"_postman_id": "04d8d8cf-55a2-0c1e-df58-32320b34f3fb",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6dfd6e9e-0ca9-458a-a574-9ace41aba8ef",
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"tests[\"response is an array\"]  = (Array.isArray(pm.response.json()))",
+							"tests[\"response is array > 0\"] = ( JSON.parse(responseBody).length >=0 )"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"books"
+					]
+				},
+				"description": "http://localhost:3000/books"
+			},
+			"response": []
+		},
+		{
+			"name": "GET Book/:id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f02f380d-44c6-4dcd-bb69-ed8fcd30b8a7",
+						"type": "text/javascript",
+						"exec": [
+							"//console.log(pm.info.requestId)",
+							"console.log(pm.request.headers)",
+							"if(pm.response.json().status == \"success\"){",
+							"    tests[\"resource has id\"]  = (JSON.parse(responseBody).id !== null)",
+							"    tests[\"resource id is \"+pm.request.url.path[1]] = (JSON.parse(responseBody).results.id == pm.request.url.path[1])",
+							"    //tests[\"resource id is 1 (other way)\"] = (pm.expect(JSON.parse(responseBody).id).to.eq(1)) //throws error",
+							"    ",
+							"    pm.test(\"resource id is 1 (other way 2)\",function(){",
+							"        //pm.expect(JSON.parse(responseBody).id).to.be.eq(1) //eq/above/below",
+							"        pm.expect(pm.response.json().results.id).to.be.oneOf([0,1])",
+							"        pm.expect(pm.response.json().results.sold).to.be.false",
+							"    })",
+							"}else if(pm.response.json().status == \"error\"){",
+							"    tests[\"on error response should have message\"] = pm.response.json().message !== null",
+							"}else{",
+							"    tests[\"unknown status\"] = false",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/book/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"book",
+						"1"
+					]
+				},
+				"description": "http://localhost:3000/book/1"
+			},
+			"response": []
+		},
+		{
+			"name": "GET Text",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "34394283-06cf-40c1-a4e0-700b70bd6ebe",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test('body to be ok',function(){",
+							"    pm.expect(pm.response.text()).to.include(\"hello\")",
+							"    pm.response.to.have.body(\"hello jhon\")",
+							"})"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/text/hello jhon",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"text",
+						"hello jhon"
+					]
+				},
+				"description": "http://localhost:3000/text/ok"
+			},
+			"response": []
+		},
+		{
+			"name": "DEL Book/:id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bf645a4a-7005-4943-bed1-c6da93940d50",
+						"type": "text/javascript",
+						"exec": [
+							"console.log(pm.request.url.port)",
+							"console.log(pm.request.url.protocol)",
+							"if(pm.response.text()=='done'){",
+							"    pm.sendRequest(\"http://localhost:3000/book/1\", function (err, response1) {",
+							"        console.log(err)",
+							"        pm.test(\"delete flow\",function(){",
+							"            pm.expect(err).to.equal(null)",
+							"            pm.expect(response1.json().status).to.be.eq(\"error\")",
+							"            pm.expect(err).to.not.be.ok;",
+							"            pm.expect(response1.json()).to.have.property('status','error')",
+							"        });",
+							"    });",
+							"}else{",
+							"    console.log(\"not done\")",
+							"}",
+							"    ",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/book/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"book",
+						"1"
+					]
+				},
+				"description": "http://localhost:3000/book/1"
+			},
+			"response": []
+		}
+	]
+}
